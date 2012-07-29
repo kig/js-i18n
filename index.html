@@ -227,6 +227,61 @@ var delocalise = function(src, locale) {
     return tsrc;
 };
 
+
+var relocalise = function(src, locale) {
+    var strings = [];
+    var indent = "";
+    var loc = LocaleMappings[locale];
+    var iloc = {};
+    for (var i in loc) {
+      iloc[loc[i]] = i;
+    }
+    var writeOut = function (token) {
+        var string = null;
+        switch (token.type) {
+            case 'Boolean':
+            case 'Identifier':
+            case 'Keyword':
+            case 'Null':
+            case 'Numeric':
+            case 'RegularExpression':
+            case 'String':
+            case 'Whitespaces':
+                string = iloc[token.value] || token.value;
+                break;
+            case 'Punctuator':
+                string = token.value;
+                if (token.value === "{") {
+                  indent += "    ";
+                  string += "\n"+indent;
+                } else if (token.value === "}") {
+                  indent = indent.slice(0,-4);
+                  string += "\n"+indent;
+                } else if (token.value === ";") {
+                  string += "\n"+indent;
+                }
+                break;
+            case 'BlockComment':
+                string = '/*' + token.value + '*/';
+                break;
+            case 'LineComment':
+                string = '//' + token.value + '\n';
+                break;
+        }
+
+        return string;
+    };
+
+    LOCALE = 'en-US';
+    var ast = esprima.parse(src, {
+        comment: true,
+        range: true,
+        tokens: true
+    });
+    var tsrc = ast.tokens.map(writeOut).join(" ");
+    return tsrc;
+};
+
 var c = document.querySelector('#customLocale');
 var loc = LocaleMappings['fi-FI']; 
 var cloc = LocaleMappings['Custom'] = {};
@@ -250,8 +305,14 @@ document.querySelector('#run').onclick = function() {
   var locale = document.querySelector('#locale').value;
   var js;
   try {
-    js = delocalise(src, locale);
-    document.querySelector('#javascript').value = js;
+    if (locale === 'en-US') {
+      js = relocalise(src, 'Custom');
+      document.querySelector('#javascript').value = js;
+      js = src;
+    } else {
+      js = delocalise(src, locale);
+      document.querySelector('#javascript').value = js;
+    }
   } catch(e) {
     document.querySelector('#javascript').value = "Parse error: " + e;
   }
