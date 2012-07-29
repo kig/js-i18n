@@ -1,0 +1,256 @@
+<html>
+<head>
+  <title>Localised JavaScript</title>
+  <meta charset="utf-8">
+  <style>
+    textarea {
+      display: inline-block;
+      width: 300px;
+      height: 300px;
+    }
+  </style>
+</head>
+<body>
+  <select id="locale">
+    <option>fi-FI</option>
+    <option>en-US</option>
+    <option>Custom</option>
+  </select>
+  <div>
+  <textarea id="source">
+funktio f(x) {
+  jos (x % 2 == 0) {
+    palauta tosi;
+  } muuten {
+    palauta epätosi;
+  }
+}
+
+joka (muu i = 0; i < 10; i++) {
+  console.log(i, f(i));
+  jos (i > 5) lopeta;
+}
+
+muu Terve = funktio(nimi) {
+  tämä.nimi = nimi;
+};
+Terve.prototyyppi = {};
+Terve.prototyyppi.moi = funktio() {
+  console.log( "Moi, " + tämä.nimi + "!" );
+};
+
+uusi Terve("Veijo").moi();
+  </textarea>
+  <textarea id="javascript" disabled="disabled">JavaScript output</textarea>
+  </div>
+  <button id="run">Run</button>
+  <div>
+    <h3>Make your custom translation</h3>
+    <div id="customLocale">
+    </div>
+  </div>
+  <script src="esprima.js"></script>
+  <script>
+    window.LocaleMappings = {
+	'en-US': {
+	    'if': 'if',
+	    'in': 'in',
+	    'do': 'do',
+	    
+	    'var': 'var',
+	    'for': 'for',
+	    'new': 'new',
+	    'try': 'try',
+	    
+	    'this': 'this',
+	    'else': 'else',
+	    'case': 'case',
+	    'void': 'void',
+	    'with': 'with',
+	    
+	    'while': 'while',
+	    'break': 'break',
+	    'catch': 'catch',
+	    'throw': 'throw',
+	    
+	    'return': 'return',
+	    'typeof': 'typeof',
+	    'delete': 'delete',
+	    'switch': 'switch',
+	    
+	    'default': 'default',
+	    'finally': 'finally',
+	    'function': 'function',
+	    'continue': 'continue',
+	    'debugger': 'debugger',
+
+	    'instanceof': 'instanceof',
+
+	    'true': 'true',
+	    'false': 'false',
+	    'null': 'null',
+	    'undefined': 'undefined',
+	    'prototype': 'prototype',
+
+	    'yield': 'yield',
+	    'let': 'let',
+
+	    'class': 'class',
+	    'enum': 'enum',
+	    'export': 'export',
+	    'extends': 'extends',
+	    'import': 'import',
+	    'super': 'super',
+
+	    'implements': 'implements',
+	    'interface': 'interface',
+	    'package': 'package',
+	    'private': 'private',
+	    'protected': 'protected',
+	    'public': 'public',
+	    'static': 'static'
+	},
+
+	'fi-FI': {
+             'jos':'if',
+             'johon':'in',
+             'tee':'do',
+
+             'muu':'var',
+             'joka':'for',
+             'uusi':'new',
+             'yritä':'try',
+
+             'tämä':'this',
+             'muuten':'else',
+             'tapaus':'case',
+             'tyhjiö':'void',
+             'jolle':'with',
+
+             'kun':'while',
+             'lopeta':'break',
+             'koppi':'catch',
+             'heitä':'throw',
+
+             'palauta':'return',
+             'tyyppi':'typeof',
+             'poista':'delete',
+             'valitse':'switch',
+
+             'oletus':'default',
+             'viimein':'finally',
+             'funktio':'function',
+             'jatka':'continue',
+             'debuggeri':'debugger',
+
+             'instanssi':'instanceof',
+
+             'tosi':'true',
+             'epätosi':'false',
+             'tyhjä':'null',
+             'puuttuva':'undefined',
+             'prototyyppi':'prototype',
+
+             'anna':'yield',
+             'on':'let',
+
+             'luokka':'class',
+             'num':'enum',
+             'vie':'export',
+             'laajentaa':'extends',
+             'tuo':'import',
+             'yli':'super',
+
+             'toteuttaa':'implements',
+             'rajapinta':'interface',
+             'pakkaus':'package',
+             'yksityinen':'private',
+             'suojattu':'protected',
+             'julkinen':'public',
+             'staattinen':'static'
+	}
+    };
+
+var delocalise = function(src, locale) {
+    var strings = [];
+    var indent = "";
+    var writeOut = function (token) {
+        var string = null;
+        switch (token.type) {
+            case 'Boolean':
+            case 'Identifier':
+            case 'Keyword':
+            case 'Null':
+            case 'Numeric':
+            case 'RegularExpression':
+            case 'String':
+            case 'Whitespaces':
+                string = token.value;
+                break;
+            case 'Punctuator':
+                string = token.value;
+                if (token.value === "{") {
+                  indent += "    ";
+                  string += "\n"+indent;
+                } else if (token.value === "}") {
+                  indent = indent.slice(0,-4);
+                  string += "\n"+indent;
+                } else if (token.value === ";") {
+                  string += "\n"+indent;
+                }
+                break;
+            case 'BlockComment':
+                string = '/*' + token.value + '*/';
+                break;
+            case 'LineComment':
+                string = '//' + token.value + '\n';
+                break;
+        }
+
+        return string;
+    };
+
+    LOCALE = locale;
+    var ast = esprima.parse(src, {
+        comment: true,
+        range: true,
+        tokens: true
+    });
+    var tsrc = ast.tokens.map(writeOut).join(" ");
+    return tsrc;
+};
+
+var c = document.querySelector('#customLocale');
+var loc = LocaleMappings['fi-FI']; 
+var cloc = LocaleMappings['Custom'] = {};
+for (var i in loc) {
+  cloc[i] = loc[i];
+  var locInput = document.createElement('div');
+  var inp = document.createElement('input');
+  inp.value = i;
+  inp.onchange = (function(translation) {
+    return function() {
+      cloc[this.value] = translation;
+    };
+  })(loc[i]);
+  locInput.appendChild(inp);
+  locInput.appendChild(document.createTextNode(" -> " + loc[i]));
+  c.appendChild(locInput);
+}
+
+document.querySelector('#run').onclick = function() {
+  var src = document.querySelector('#source').value;
+  var locale = document.querySelector('#locale').value;
+  var js;
+  try {
+    js = delocalise(src, locale);
+    document.querySelector('#javascript').value = js;
+  } catch(e) {
+    document.querySelector('#javascript').value = "Parse error: " + e;
+  }
+  if (js) eval(js);
+};
+
+</script>
+</body>
+</html>
