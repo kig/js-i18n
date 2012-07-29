@@ -282,7 +282,7 @@ var relocalise = function(src, locale) {
     return tsrc;
 };
 
-var c = document.querySelector('#customLocale');
+var c = document.getElementById('customLocale');
 var loc = LocaleMappings['fi-FI']; 
 var cloc = LocaleMappings['Custom'] = {};
 for (var i in loc) {
@@ -300,21 +300,21 @@ for (var i in loc) {
   c.appendChild(locInput);
 }
 
-document.querySelector('#run').onclick = function() {
-  var src = document.querySelector('#source').value;
-  var locale = document.querySelector('#locale').value;
+document.getElementById('run').onclick = function() {
+  var src = document.getElementById('source').value;
+  var locale = document.getElementById('locale').value;
   var js;
   try {
     if (locale === 'en-US') {
       js = relocalise(src, 'Custom');
-      document.querySelector('#javascript').value = js;
+      document.getElementById('javascript').value = js;
       js = src;
     } else {
       js = delocalise(src, locale);
-      document.querySelector('#javascript').value = js;
+      document.getElementById('javascript').value = js;
     }
   } catch(e) {
-    document.querySelector('#javascript').value = "Parse error: " + e;
+    document.getElementById('javascript').value = "Parse error: " + e;
   }
   if (js) eval(js);
 };
