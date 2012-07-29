@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <title>Translation test</title>
+    <meta charset="utf-8">
+    <script src="esprima.js"></script>
+    <script src="js-i18n.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <h1 id="otsikko">Not working yet</h1>
+    <script type="text/js-i18n" lang="fi-FI">
+      muu otsikko = asiakirja.haeElementtiIdllä('otsikko');
+      otsikko.sisäHTML = otsikko.sisäHTML.korvaa('Not w', 'W').korvaa('yet', 'now'); 
+    </script>
+    <script type="text/js-i18n" lang="fi-FI" src="external.js"></script>
+  </body>
+</html>
