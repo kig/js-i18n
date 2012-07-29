@@ -431,7 +431,7 @@ parseStatement: true, parseSourceElement: true */
 
     function scanIdentifier(locale) {
         var ch, start, id, restore;
-	locale = locale || LOCALE || 'en-US';
+        locale = locale || LOCALE || 'en-US';
 
         ch = source[index];
         if (!isIdentifierStart(ch)) {
@@ -499,7 +499,7 @@ parseStatement: true, parseSourceElement: true */
             };
         }
 
-	id = LocaleMappings[locale][id] || id;
+        id = LocaleMappings[locale][id] || id;
 
         if (isKeyword(id)) {
             return {
@@ -3207,7 +3207,8 @@ parseStatement: true, parseSourceElement: true */
             value = sliceSource(token.range[0], token.range[1]);
             extra.tokens.push({
                 type: TokenName[token.type],
-                value: token.type === Token.StringLiteral ? value : token.value,
+                value: value,
+                id: token.value,
                 range: range
             });
         }

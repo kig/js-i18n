@@ -178,9 +178,18 @@ joka (muu i johon tere) {
 	}
     };
 
-var delocalise = function(src, locale) {
+var prettyPrint = function(tokens, locale) {
     var strings = [];
     var indent = "";
+    var loc, iloc;
+    if (locale) {
+      loc = LocaleMappings[locale];
+      iloc = {};
+      for (var i in loc) {
+        iloc[loc[i]] = i;
+      }
+    }
+    var idx = 0;
     var writeOut = function (token) {
         var string = null;
         switch (token.type) {
@@ -189,22 +198,21 @@ var delocalise = function(src, locale) {
             case 'Keyword':
             case 'Null':
             case 'Numeric':
+            case 'Punctuator':
+                string = token.id;
+                var id = LocaleMappings['en-US'][token.id];
+                if (id !== undefined) {
+                  if (locale) {
+                    string = token.value.replace(/\S+/, iloc[token.id]);
+                  } else {
+                    string = token.value.replace(/\S+/, id);
+                  }
+                }
+                break;
+            case 'WhiteSpace':
             case 'RegularExpression':
             case 'String':
-            case 'Whitespaces':
                 string = token.value;
-                break;
-            case 'Punctuator':
-                string = token.value;
-                if (token.value === "{") {
-                  indent += "    ";
-                  string += "\n"+indent;
-                } else if (token.value === "}") {
-                  indent = indent.slice(0,-4);
-                  string += "\n"+indent;
-                } else if (token.value === ";") {
-                  string += "\n"+indent;
-                }
                 break;
             case 'BlockComment':
                 string = '/*' + token.value + '*/';
@@ -217,70 +225,58 @@ var delocalise = function(src, locale) {
         return string;
     };
 
+    return tokens.map(writeOut).join('');
+};
+
+var injectWhiteSpace = function(src, tokens) {
+  var i = 0;
+  var tok = tokens[i];
+  if (!tok) {
+    tokens.push({"type":"WhiteSpace", "value":src, range:[0,src.length-1]});
+  } else {
+    var start = 0;
+    var end = tokens[i].range[0]-1;
+    if (end-start >= 0) {
+      tokens.splice(i, 0, {type:"WhiteSpace", value:src.substring(start, end+1), range:[start, end]});
+      i++;
+    }
+    i++;
+    for (; i < tokens.length; i++) {
+      start = tokens[i-1].range[1]+1;
+      end = tokens[i].range[0]-1;
+      if (end-start >= 0) {
+        tokens.splice(i, 0, {type:"WhiteSpace", value:src.substring(start, end+1), range:[start, end]});
+        i++;
+      }
+    }
+  }
+};
+
+
+var delocalise = function(src, locale) {
     LOCALE = locale;
     var ast = esprima.parse(src, {
         comment: true,
         range: true,
         tokens: true
     });
-    var tsrc = ast.tokens.map(writeOut).join(" ");
+    injectWhiteSpace(src, ast.tokens);
+    var tsrc = prettyPrint(ast.tokens);
     return tsrc;
 };
 
-
-var relocalise = function(src, locale) {
-    var strings = [];
-    var indent = "";
-    var loc = LocaleMappings[locale];
-    var iloc = {};
-    for (var i in loc) {
-      iloc[loc[i]] = i;
-    }
-    var writeOut = function (token) {
-        var string = null;
-        switch (token.type) {
-            case 'Boolean':
-            case 'Identifier':
-            case 'Keyword':
-            case 'Null':
-            case 'Numeric':
-            case 'RegularExpression':
-            case 'String':
-            case 'Whitespaces':
-                string = iloc[token.value] || token.value;
-                break;
-            case 'Punctuator':
-                string = token.value;
-                if (token.value === "{") {
-                  indent += "    ";
-                  string += "\n"+indent;
-                } else if (token.value === "}") {
-                  indent = indent.slice(0,-4);
-                  string += "\n"+indent;
-                } else if (token.value === ";") {
-                  string += "\n"+indent;
-                }
-                break;
-            case 'BlockComment':
-                string = '/*' + token.value + '*/';
-                break;
-            case 'LineComment':
-                string = '//' + token.value + '\n';
-                break;
-        }
-
-        return string;
-    };
-
+var localise = function(src, locale) {
     LOCALE = 'en-US';
     var ast = esprima.parse(src, {
         comment: true,
         range: true,
         tokens: true
     });
-    var tsrc = ast.tokens.map(writeOut).join(" ");
+    injectWhiteSpace(src, ast.tokens);
+    var tsrc = prettyPrint(ast.tokens, locale);
     return tsrc;
 };
+
 
 var c = document.getElementById('customLocale');
 var loc = LocaleMappings['fi-FI']; 
@@ -306,7 +302,7 @@ document.getElementById('run').onclick = function() {
   var js;
   try {
     if (locale === 'en-US') {
-      js = relocalise(src, 'Custom');
+      js = localise(src, 'Custom');
       document.getElementById('javascript').value = js;
       js = src;
     } else {
