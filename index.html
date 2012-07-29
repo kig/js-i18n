@@ -4,20 +4,25 @@
   <meta charset="utf-8">
   <style>
     textarea {
-      display: inline-block;
+      display: block;
       width: 300px;
-      height: 300px;
+      height: 400px;
+    }
+    .ib {
+      display: inline-block;
+      vertical-align: top;
     }
   </style>
 </head>
 <body>
-  <select id="locale">
-    <option>fi-FI</option>
-    <option>en-US</option>
-    <option>Custom</option>
-  </select>
   <div>
-  <textarea id="source">
+    <div class="ib">
+      From <select id="locale">
+        <option>fi-FI</option>
+        <option>en-US</option>
+        <option>Custom</option>
+      </select>
+      <textarea id="source">
 funktio f(x) {
   jos (x % 2 == 0) {
     palauta tosi;
@@ -46,9 +51,17 @@ tere.moi();
 joka (muu i johon tere) {
   console.log(i);
 }
-
-  </textarea>
-  <textarea id="javascript" disabled="disabled">JavaScript output</textarea>
+      </textarea>
+    </div>
+    <div class="ib">
+      To <select id="targetLocale">
+        <option>ja-JP</option>
+        <option>en-US</option>
+        <option>fi-FI</option>
+        <option>Custom</option>
+      </select>
+      <textarea id="javascript" disabled="disabled">Translation output</textarea>
+    </div>
   </div>
   <button id="run">Run</button>
   <div>
@@ -58,6 +71,13 @@ joka (muu i johon tere) {
   </div>
   <script src="esprima.js"></script>
   <script>
+var invert = function(obj) {
+  var o = {};
+  for (var i in obj) {
+    o[obj[i]] = i;
+  }
+  return o;
+};
     window.LocaleMappings = {
 	'en-US': {
 	    'if': 'if',
@@ -117,6 +137,39 @@ joka (muu i johon tere) {
 	    'public': 'public',
 	    'static': 'static'
 	},
+
+'ja-JP': invert({
+    'function':'関数',
+    'if':'もし',
+    'else':'それ以外',
+    'for':'なら',
+    'while':'ながら',
+    'return':'戻す',
+    'do':'する',
+    'true':'真',
+    'false':'偽',
+    'var':'変数',
+    'in':'が',
+    'let':'させ',
+    'new':'新',
+    'try':'試',
+    'case':'ケース',
+    'null':'ヌル',
+    'this':'これ',
+    'with':'と',
+    'break':'中断',
+    'throw':'投げ',
+    'catch':'受け',
+    'switch':'スイッチ',
+    'continue':'続け',
+    'debugger':'デバッガ',
+    'instanceof':'実例',
+    'typeof':'属性',
+    'void':'無効',
+    'delete':'削除',
+    'default':'デフォルト',
+    'finally':'やっと'
+}),
 
 	'fi-FI': {
              'jos':'if',
@@ -299,16 +352,15 @@ for (var i in loc) {
 document.getElementById('run').onclick = function() {
   var src = document.getElementById('source').value;
   var locale = document.getElementById('locale').value;
+  var targetLocale = document.getElementById('targetLocale').value;
   var js;
   try {
     if (locale === 'en-US') {
-      js = localise(src, 'Custom');
-      document.getElementById('javascript').value = js;
       js = src;
     } else {
       js = delocalise(src, locale);
-      document.getElementById('javascript').value = js;
     }
+    document.getElementById('javascript').value = localise(js, targetLocale);
   } catch(e) {
     document.getElementById('javascript').value = "Parse error: " + e;
   }
