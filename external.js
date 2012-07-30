@@ -1,6 +1,6 @@
 (funktio() {
 
-    function lisääKappale(teksti) {
+    funktio lisääKappale(teksti) {
 	muu kappale = asiakirja.luoElementti("p");
 
 	kappale.lisääLapsi(asiakirja.luoTekstiSolmu(teksti));
