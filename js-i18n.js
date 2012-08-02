@@ -232,7 +232,9 @@
                 var id = LocaleMappings['en-US'][token.id];
                 if (id !== undefined) {
                     if (locale) {
-                        string = token.value.replace(/\S+/, iloc[token.id]);
+			if (iloc[token.id]) {
+                            string = token.value.replace(/\S+/, iloc[token.id]);
+			}
                     } else {
                         string = token.value.replace(/\S+/, id);
                     }
