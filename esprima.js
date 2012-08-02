@@ -487,6 +487,8 @@ parseStatement: true, parseSourceElement: true */
             }
         }
 
+        id = LocaleMappings[locale][id] || id;
+
         // There is no keyword or literal with only one character.
         // Thus, it must be an identifier.
         if (id.length === 1) {
@@ -498,8 +500,6 @@ parseStatement: true, parseSourceElement: true */
                 range: [start, index]
             };
         }
-
-        id = LocaleMappings[locale][id] || id;
 
         if (isKeyword(id)) {
             return {
