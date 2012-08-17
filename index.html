@@ -27,6 +27,7 @@
         <option>en-US</option>
         <option>ja-JP</option>
         <option>fr-FR</option>
+	<option>zh-CN</option>
         <option>Custom</option>
       </select>
       <textarea id="source">
@@ -39,7 +40,7 @@ funktio f(x) {
 }
 
 joka (muu i = 0; i < 10; i++) {
-  console.log(i, f(i));
+  konsoli.loki(i, f(i));
   jos (i > 5) lopeta;
 }
 
@@ -56,9 +57,10 @@ muu tere = uusi Terve("Veijo");
 tere.moi();
 
 joka (muu i johon tere) {
-  console.log(i);
+  konsoli.loki(i);
 }
       </textarea>
+      <button id="run">Run</button>
     </div>
     <div class="ib">
       <p>To <select id="targetLocale">
@@ -66,323 +68,55 @@ joka (muu i johon tere) {
         <option>en-US</option>
         <option>fi-FI</option>
         <option>fr-FR</option>
+	<option>zh-CN</option>
         <option>Custom</option>
       </select>
       <textarea id="javascript" disabled="disabled">Translation output</textarea>
     </div>
     <div class="ib">
-      <h1>JS-i18n: write code in your own language</h1>
+      <h1>JS-i18n: JavaScript in your language</h1>
+      <p>JavaScript is an English programming language. If you're a native English speaker, this is fine and dandy. But 95% of the World's population aren't native English speakers. For us, learning JavaScript starts with an intensive foreign language course. In some countries you need to learn a second alphabet as well. Imagine having to learn a few hundred words of Arabic just to make a web page.
+
+      <p>The foreign language requirement tends to push up the age when we start coding. I could read Finnish before I started school. Getting to a decent level of reading English took a dozen years on top of that. Sure, I was cargo-culting some code in the meantime, but I didn't really understand the words I was using.
+
+      <p>Even more important than delaying learning, the foreign language requirement also impedes learning. If you want to program but aren't super hot at languages, the foreign language may well make you skip the whole thing. But if the programming language is speaking your language, maybe you'll give it a go.
+
+      <p>Programming in a second language isn't just a hurdle for learning, it also slows you down. You can't think as fast in a non-native language. If your brain's running in Finnish, thinking about code in English is like running emulated code.
+
+      <h3>Usage</h3>
+      <p>First, add the JS-i18n script to your page:
+
+      <p><pre>&lt;script src="esprima.js">&lt;/script><br>&lt;script src="js-i18n.js">&lt;/script></pre>
+
+      <p>Next, create a script tag with type="text/js-i18n" and lang="fi-FI" (replacing "fi-FI" with your desired locale, naturally). You're now ready to write localised JavaScript. You can also add the quoted string "lang fi-FI" at the start of the localised JavaScript file to set the script's locale.
+
+      <p><pre>&lt;script type="text/js-i18n">
+  "lang fi-FI";
+
+  hälytä("Terve maailma!");
+
+&lt;/script></pre>
+
+      <p>Done!
+
+
+      <h3>Tech details</h3>
       <p>This script parses JavaScript from a localised version to executable JavaScript. When you click "Run", the localised JavaScript in the left box is executed. You also get a translation of the code in the right box.
       <p>You should also take a look at <a href="test_i18n.html">this automagical demo</a> that translates and executes localised JavaScript files. The localised JavaScript files use type="text/js-i18n" to tell the browser not to execute them without translation. The translation library js-i18n then seeks out all the text/js-i18n scripts in the document and runs them.
-      <p>The translator works by substituting defined keywords and identifiers for their translated versions. It's not perfect, but it's surprisingly comfortable. The Japanese and French translations are from <a href="http://www.babylscript.com">BabylScript</a>, which is another awesome JavaScript translation project that you should check out.
+      <p>The translator works by substituting defined keywords and identifiers for their translated versions. It's not perfect, but it's surprisingly comfortable. The non-Finnish translations are from <a href="http://www.babylscript.com">BabylScript</a>, which is an awesome JavaScript translation project that you should check out.
     </div>
   </div>
-  <button id="run">Run</button>
   <div>
     <h3>Make your custom translation</h3>
     <div id="customLocale">
     </div>
   </div>
   <script src="esprima.js"></script>
+  <script src="js-i18n.js"></script>
   <script>
-var invert = function(obj) {
-  var o = {};
-  for (var i in obj) {
-    o[obj[i]] = i;
-  }
-  return o;
-};
-    window.LocaleMappings = {
-	'en-US': {
-	    'if': 'if',
-	    'in': 'in',
-	    'do': 'do',
-	    
-	    'var': 'var',
-	    'for': 'for',
-	    'new': 'new',
-	    'try': 'try',
-	    
-	    'this': 'this',
-	    'else': 'else',
-	    'case': 'case',
-	    'void': 'void',
-	    'with': 'with',
-	    
-	    'while': 'while',
-	    'break': 'break',
-	    'catch': 'catch',
-	    'throw': 'throw',
-	    
-	    'return': 'return',
-	    'typeof': 'typeof',
-	    'delete': 'delete',
-	    'switch': 'switch',
-	    
-	    'default': 'default',
-	    'finally': 'finally',
-	    'function': 'function',
-	    'continue': 'continue',
-	    'debugger': 'debugger',
-
-	    'instanceof': 'instanceof',
-
-	    'true': 'true',
-	    'false': 'false',
-	    'null': 'null',
-	    'undefined': 'undefined',
-	    'prototype': 'prototype',
-
-	    'yield': 'yield',
-	    'let': 'let',
-
-	    'class': 'class',
-	    'enum': 'enum',
-	    'export': 'export',
-	    'extends': 'extends',
-	    'import': 'import',
-	    'super': 'super',
-
-	    'implements': 'implements',
-	    'interface': 'interface',
-	    'package': 'package',
-	    'private': 'private',
-	    'protected': 'protected',
-	    'public': 'public',
-	    'static': 'static'
-	},
-
-'ja-JP': invert({
-    'function':'関数',
-    'if':'もし',
-    'else':'それ以外',
-    'for':'なら',
-    'while':'ながら',
-    'return':'戻す',
-    'do':'する',
-    'true':'真',
-    'false':'偽',
-    'var':'変数',
-    'in':'が',
-    'let':'させ',
-    'new':'新',
-    'try':'試',
-    'case':'ケース',
-    'null':'ヌル',
-    'this':'これ',
-    'with':'と',
-    'break':'中断',
-    'throw':'投げ',
-    'catch':'受け',
-    'switch':'スイッチ',
-    'continue':'続け',
-    'debugger':'デバッガ',
-    'instanceof':'実例',
-    'typeof':'属性',
-    'void':'無効',
-    'delete':'削除',
-    'default':'デフォルト',
-    'finally':'やっと'
-}),
-
-'fr-FR': invert({
-'function':'fonction',
-'if':'si',
-'else':'sinon',
-'for':'pour',
-'while':'tantque',
-'return':'retourner',
-'do':'faire',
-'true':'vrai',
-'false':'faux',
-'var':'var',
-'in':'dans',
-'let':'soit',
-'new':'nouveau',
-'try':'essayer',
-'case':'cas',
-'null':'nul',
-'this':'ceci',
-'with':'avec',
-'break':'casser',
-'throw':'lancer',
-'catch':'capturer',
-'switch':'selon',
-'continue':'continuer',
-'debugger':'débogueur',
-'instanceof':'instancede',
-'typeof':'typede',
-'void':'vide',
-'delete':'effacer',
-'default':'défaut',
-'finally':'finalement'
-}),
-
-	'fi-FI': {
-             'jos':'if',
-             'johon':'in',
-             'tee':'do',
-
-             'muu':'var',
-             'joka':'for',
-             'uusi':'new',
-             'yritä':'try',
-
-             'tämä':'this',
-             'muuten':'else',
-             'tapaus':'case',
-             'tyhjiö':'void',
-             'jolle':'with',
-
-             'kun':'while',
-             'lopeta':'break',
-             'koppi':'catch',
-             'heitä':'throw',
-
-             'palauta':'return',
-             'tyyppi':'typeof',
-             'poista':'delete',
-             'valitse':'switch',
-
-             'oletus':'default',
-             'viimein':'finally',
-             'funktio':'function',
-             'jatka':'continue',
-             'debuggeri':'debugger',
-
-             'instanssi':'instanceof',
-
-             'tosi':'true',
-             'epätosi':'false',
-             'tyhjä':'null',
-             'puuttuva':'undefined',
-             'prototyyppi':'prototype',
-
-             'anna':'yield',
-             'on':'let',
-
-             'luokka':'class',
-             'num':'enum',
-             'vie':'export',
-             'laajentaa':'extends',
-             'tuo':'import',
-             'yli':'super',
-
-             'toteuttaa':'implements',
-             'rajapinta':'interface',
-             'pakkaus':'package',
-             'yksityinen':'private',
-             'suojattu':'protected',
-             'julkinen':'public',
-             'staattinen':'static'
-	}
-    };
-
-var prettyPrint = function(tokens, locale) {
-    var strings = [];
-    var indent = "";
-    var loc, iloc;
-    if (locale) {
-      loc = LocaleMappings[locale];
-      iloc = {};
-      for (var i in loc) {
-        iloc[loc[i]] = i;
-      }
-    }
-    var idx = 0;
-    var writeOut = function (token) {
-        var string = null;
-        switch (token.type) {
-            case 'Boolean':
-            case 'Identifier':
-            case 'Keyword':
-            case 'Null':
-            case 'Numeric':
-            case 'Punctuator':
-                string = token.id;
-                var id = LocaleMappings['en-US'][token.id];
-                if (id !== undefined) {
-                  if (locale) {
-                    if (iloc[token.id]) {
-                      string = token.value.replace(/\S+/, iloc[token.id]);
-                    }
-                  } else {
-                    string = token.value.replace(/\S+/, id);
-                  }
-                }
-                break;
-            case 'WhiteSpace':
-            case 'RegularExpression':
-            case 'String':
-                string = token.value;
-                break;
-            case 'BlockComment':
-                string = '/*' + token.value + '*/';
-                break;
-            case 'LineComment':
-                string = '//' + token.value + '\n';
-                break;
-        }
-
-        return string;
-    };
-
-    return tokens.map(writeOut).join('');
-};
-
-var injectWhiteSpace = function(src, tokens) {
-  var i = 0;
-  var tok = tokens[i];
-  if (!tok) {
-    tokens.push({"type":"WhiteSpace", "value":src, range:[0,src.length-1]});
-  } else {
-    var start = 0;
-    var end = tokens[i].range[0]-1;
-    if (end-start >= 0) {
-      tokens.splice(i, 0, {type:"WhiteSpace", value:src.substring(start, end+1), range:[start, end]});
-      i++;
-    }
-    i++;
-    for (; i < tokens.length; i++) {
-      start = tokens[i-1].range[1]+1;
-      end = tokens[i].range[0]-1;
-      if (end-start >= 0) {
-        tokens.splice(i, 0, {type:"WhiteSpace", value:src.substring(start, end+1), range:[start, end]});
-        i++;
-      }
-    }
-  }
-};
-
-
-var delocalise = function(src, locale) {
-    LOCALE = locale;
-    var ast = esprima.parse(src, {
-        comment: true,
-        range: true,
-        tokens: true
-    });
-    injectWhiteSpace(src, ast.tokens);
-    var tsrc = prettyPrint(ast.tokens);
-    return tsrc;
-};
-
-var localise = function(src, locale) {
-    LOCALE = 'en-US';
-    var ast = esprima.parse(src, {
-        comment: true,
-        range: true,
-        tokens: true
-    });
-    injectWhiteSpace(src, ast.tokens);
-    var tsrc = prettyPrint(ast.tokens, locale);
-    return tsrc;
-};
-
-
 var c = document.getElementById('customLocale');
-var loc = LocaleMappings['fi-FI']; 
-var cloc = LocaleMappings['Custom'] = {};
+var loc = JSI18N.localeMappings['fi-FI']; 
+var cloc = JSI18N.localeMappings['Custom'] = {};
 for (var i in loc) {
   cloc[i] = loc[i];
   var locInput = document.createElement('div');
@@ -397,6 +131,13 @@ for (var i in loc) {
   locInput.appendChild(document.createTextNode(" -> " + loc[i]));
   c.appendChild(locInput);
 }
+var save = document.createElement('button');
+save.innerHTML = 'Get as JSON';
+save.onclick = function() {
+  var str = JSON.stringify(cloc, null, 4);
+  window.open('data:text/plain;base64,'+btoa(str));
+};
+c.appendChild(save);
 
 document.getElementById('run').onclick = function() {
   var src = document.getElementById('source').value;
@@ -407,9 +148,9 @@ document.getElementById('run').onclick = function() {
     if (locale === 'en-US') {
       js = src;
     } else {
-      js = delocalise(src, locale);
+      js = JSI18N.delocalise(src, locale);
     }
-    document.getElementById('javascript').value = localise(js, targetLocale);
+    document.getElementById('javascript').value = JSI18N.localise(js, targetLocale);
   } catch(e) {
     document.getElementById('javascript').value = "Parse error: " + e;
   }
@@ -420,6 +161,7 @@ document.getElementById('run').onclick = function() {
 
 
 <a href="https://github.com/kig/js-i18n"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+
 
 </body>
 </html>

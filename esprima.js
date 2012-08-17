@@ -332,8 +332,6 @@ parseStatement: true, parseSourceElement: true */
         return isFutureReservedWord(id);
     }
 
-    // Locale mappings.
-
     // Return the next character and move forward.
 
     function nextChar() {
@@ -429,9 +427,8 @@ parseStatement: true, parseSourceElement: true */
         return String.fromCharCode(code);
     }
 
-    function scanIdentifier(locale) {
+    function scanIdentifier() {
         var ch, start, id, restore;
-        locale = locale || LOCALE || 'en-US';
 
         ch = source[index];
         if (!isIdentifierStart(ch)) {
@@ -487,7 +484,9 @@ parseStatement: true, parseSourceElement: true */
             }
         }
 
-        id = LocaleMappings[locale][id] || id;
+	if (esprima.localeMapping != null) {
+            id = esprima.localeMapping[id] || id;
+	}
 
         // There is no keyword or literal with only one character.
         // Thus, it must be an identifier.
