@@ -133,6 +133,8 @@
         }),
         
         'fi-FI': {
+	    // reserved words
+
             'jos':'if',
             'johon':'in',
             'tee':'do',
@@ -170,7 +172,6 @@
             'epätosi':'false',
             'tyhjä':'null',
             'puuttuva':'undefined',
-            'prototyyppi':'prototype',
 
             'anna':'yield',
             'on':'let',
@@ -190,20 +191,61 @@
             'julkinen':'public',
             'staattinen':'static',
 
-	    'asiakirja':'document',
-	    'haeElementtiIdllä':'getElementById',
+	    // built-ins
+	    'Taulukko':'Array',
+	    'Olio':'Object',
+	    'Funktio':'Function',
+	    'Merkkijono':'String',
+	    'Numero':'Number',
+	    'evaluoi':'eval',
 
-	    'sisäHTML':'innerHTML',
+	    // String
 	    'korvaa':'replace',
+	    'pituus':'length',
 
+	    // common properties
+            'prototyyppi':'prototype',
+
+	    // DOM globals
+	    'asiakirja':'document',
+	    'ikkuna':'window',
+	    'Solmu':'Node',
+	    'SolmuLista':'NodeList',
+	    'HTMLElementti':'HTMLElement',
+	    'TekstiSolmu':'TextNode',
+	    'Kuva':'Image',
+
+	    // document
+	    'pää':'head',
 	    'runko':'body',
+
+	    // Element
+	    'haeElementtiIdllä':'getElementById',
+	    'haeElementitTaginNimellä':'getElementsByTagName',
+	    'haeElementitLuokanNimellä':'getElementsByClassName',
+	    'valitseKyselyllä':'querySelector',
+	    'valitseKaikkiKyselyllä':'querySelectorAll',
+	    'sisäHTML':'innerHTML',
 	    'luoElementti':'createElement',
 	    'lisääLapsi':'appendChild',
 	    'luoTekstiSolmu':'createTextNode',
 	    'lapsiSolmut':'childNodes',
-	    'pituus':'length',
+	    'seuraavaSisarus':'nextSibling',
+	    'ensimmäinenLapsi':'firstChild',
+	    'viimeinenLapsi':'lastChild',
+	    'emoSolmu':'parentNode',
+	    'poistaLapsi':'removeChild',
+	    'sijoitaEteen':'insertBefore',
+
+	    // Style
 	    'tyyli':'style',
-	    'väri':'color'
+	    'väri':'color',
+	    'marginaali':'margin',
+	    'täyte':'padding',
+	    'raja':'border',
+	    'rajanLeveys':'borderWidth',
+	    'rajanSäde':'borderRadius'
+
         }
     };
 
@@ -338,6 +380,10 @@
     };
 
     var addI18NScript = function(text, lang, elem) {
+	var langString = text.match(/^\s*"lang ([^"]+)"(;|\n)/m);
+	if (langString && langString[1]) {
+	    lang = langString[1];
+	}
         var src = delocalise(text, lang);
         var s = document.createElement('script');
         s.appendChild(document.createTextNode(src));
