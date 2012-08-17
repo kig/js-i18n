@@ -199,6 +199,7 @@
 	    'Numero':'Number',
 	    'SääKie':'RegExp',
 	    'evaluoi':'eval',
+	    'onkoNaN':'isNaN',
 
 	    'Kok8Taulukko':'Int8Array',
 	    'Luon8Taulukko':'Uint8Array',
@@ -308,10 +309,51 @@
 	    'HTMLElementti':'HTMLElement',
 	    'Tekstisolmu':'TextNode',
 	    'Kuva':'Image',
+	    'Tapaus':'Event',
+	    'Virhe':'Error',
+	    'HiiriTapaus':'MouseEvent',
+	    'hälytä':'alert',
+	    'konsoli':'console',
+
+	    // console
+	    'loki':'log',
 
 	    // document
 	    'pää':'head',
 	    'runko':'body',
+	    'kuvat':'images',
+	    'lomakkeet':'forms',
+
+	    // events
+	    'kunladattu':'onload',
+	    'kunhiiripäällä':'onmouseover',
+	    'kunhiiripois':'onmouseout',
+	    'kunhiirialas':'onmousedown',
+	    'kunhiiriylös':'onmouseup',
+	    'kunhiiriliikkuu':'onmousemove',
+	    'kunnapsaus':'onclick',
+	    'kuntuplanapsaus':'ondblclick',
+	    'kunnäppäinalas':'onkeydown',
+	    'kunnäppäinylös':'onkeydown',
+	    'kunnäppäinpainettu':'onkeypress',
+	    'kunvaihdettu':'onchange',
+	    'kunkohdistettu':'onfocus',
+	    'kunsumennettu':'onblur',
+	    'kunlähetetty':'onsubmit',
+	    'kohde':'target',
+	    'asiakasX':'clientX',
+	    'asiakasY':'clientY',
+	    'tasoX':'layerX',
+	    'tasoY':'layerY',
+	    'nappi':'button',
+	    'mikä':'which',
+	    'merkkikoodi':'charCode',
+	    'näppäinkoodi':'keyCode',
+	    'estäOletus':'preventDefault',
+	    'pysäytäLähetys':'stopPropagation',
+	    'altnäppäin':'altKey',
+	    'ctrlnäppäin':'ctrlKey',
+	    'vaihtonäppäin':'shiftKey',
 
 	    // Element
 	    'haeElementtiIdllä':'getElementById',
@@ -322,14 +364,18 @@
 	    'sisäHTML':'innerHTML',
 	    'luoElementti':'createElement',
 	    'lisääLapsi':'appendChild',
-	    'luoTekstiSolmu':'createTextNode',
-	    'lapsiSolmut':'childNodes',
+	    'luoTekstisolmu':'createTextNode',
+	    'lapsisolmut':'childNodes',
 	    'seuraavaSisarus':'nextSibling',
-	    'ensimmäinenLapsi':'firstChild',
-	    'viimeinenLapsi':'lastChild',
+	    'ekaLapsi':'firstChild',
+	    'vikaLapsi':'lastChild',
 	    'emoSolmu':'parentNode',
 	    'poistaLapsi':'removeChild',
 	    'sijoitaEteen':'insertBefore',
+	    'lisääTapauskuuntelija':'addEventListener',
+	    'poistaTapauskuuntelija':'removeEventListener',
+	    'haeMäärite':'getAttribute',
+	    'asetaMäärite':'setAttribute',
 
 	    // Style
 	    'tyyli':'style',
@@ -376,10 +422,30 @@
 	    'täyteYlä':'paddingTop',
 	    'täyteAla':'paddingBottom',
 	    'raja':'border',
+	    'rajaAla':'borderBottom',
+	    'rajaYlä':'borderTop',
+	    'rajaVasen':'borderLeft',
+	    'rajaOikea':'borderRight',
 	    'rajanVäri':'borderColor',
 	    'rajanLeveys':'borderWidth',
 	    'rajanTyyli':'borderStyle',
-	    'rajanSäde':'borderRadius'
+	    'rajanSäde':'borderRadius',
+	    'rajaAlaVäri':'borderBottomColor',
+	    'rajaAlaVasenSäde':'borderBottomLeftRadius',
+	    'rajaAlaOikeaSäde':'borderBottomRightRadius',
+	    'rajaAlaLeveys':'borderBottomWidth',
+	    'rajaAlaTyyli':'borderBottomStyle',
+	    'rajaYläVäri':'borderTopColor',
+	    'rajaYläVasenSäde':'borderTopLeftRadius',
+	    'rajaYläOikeaSäde':'borderTopRightRadius',
+	    'rajaYläLeveys':'borderTopWidth',
+	    'rajaYläTyyli':'borderTopStyle',
+	    'rajaVasenVäri':'borderLeftColor',
+	    'rajaVasenLeveys':'borderLeftWidth',
+	    'rajaVasenTyyli':'borderLeftStyle',
+	    'rajaOikeaVäri':'borderRightColor',
+	    'rajaOikeaLeveys':'borderRightWidth',
+	    'rajaOikeaTyyli':'borderRightStyle'
 
         }
     };
@@ -515,8 +581,9 @@
     };
 
     var addI18NScript = function(text, lang, elem) {
-	var langString = text.match(/^\s*"lang ([^"]+)"(;|\n)/m);
-	if (langString && langString[1]) {
+	var re = /^\s*"lang ([^"]+)"(;|\n)/m;
+	var langString = text.match(re);
+	if (langString != null && langString[1]) {
 	    lang = langString[1];
 	}
         var src = delocalise(text, lang);
