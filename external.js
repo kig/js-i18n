@@ -1,4 +1,4 @@
-"lang fi-FI";
+"lang fi";
 
 (funktio() {
 
