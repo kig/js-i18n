@@ -3836,16 +3836,18 @@
         }
     };
 
+    var inverted = {};
+    for (var i in localeMappings) {
+	inverted[i] = invert(localeMappings[i]);
+    }
+
     var prettyPrint = function(tokens, locale) {
         var strings = [];
         var indent = "";
         var loc, iloc;
-        if (locale) {
+        if (locale != null) {
             loc = JSI18N.localeMappings[locale];
-            iloc = {};
-            for (var i in loc) {
-                iloc[loc[i]] = i;
-            }
+            iloc = JSI18N.invertedMappings[locale];
         }
         var idx = 0;
         var writeOut = function (token) {
@@ -3860,14 +3862,20 @@
                 string = token.id;
                 var id = JSI18N.localeMappings['en-US'][token.id];
                 if (id !== undefined) {
-                    if (locale) {
+                    if (locale != null) {
 			if (iloc[token.id]) {
                             string = token.value.replace(/\S+/, iloc[token.id]);
 			}
                     } else {
                         string = token.value.replace(/\S+/, id);
                     }
-                }
+                } else if (loc !== undefined && loc[token.id] && loc[token.id] !== token.id) {
+		    // Namespace collision.
+		    // The delocalised code uses a localised reserved word as an identifier.
+		    // Escape the reserved word.
+		    string = token.value.replace(/\S+/, token.id+'ಠ_ಠ');
+		    console.log(token.id);
+		}
                 break;
             case 'WhiteSpace':
             case 'RegularExpression':
@@ -4009,6 +4017,7 @@
 
     window.JSI18N = {
 	localeMappings: localeMappings,
+	invertedMappings: inverted,
 	localize: localise,
 	localise: localise,
 	delocalize: delocalise,
